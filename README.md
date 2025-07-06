@@ -1,6 +1,6 @@
 # gochat
 
-A professional, scalable, and clean Go backend for a Telegram-style chat system.
+A Go backend for a Telegram-style chat system.
 
 **Features:**
 - User signup & login (JWT, bcrypt)
@@ -55,93 +55,224 @@ gochat/
 
 ## 📖 API Endpoints
 
-> All endpoints except `/signup` and `/login` require JWT authentication.  
-> Provide the token in the `Authorization: Bearer <token>` HTTP header.
+_All endpoints except `/signup` and `/login` require JWT authentication.  
+Provide the token in the `Authorization: Bearer <token>` HTTP header._
 
-### Authentication
+---
 
-- **Sign Up**
-  - `POST /signup`
-  - Body:
+### 🔒 Authentication
+
+#### Sign Up
+
+- **Endpoint:** `POST /signup`
+- **Request Body:**
     ```json
     {
       "username": "your_username",
       "password": "your_password"
     }
     ```
-- **Login**
-  - `POST /login`
-  - Body:
+- **Response:**
+    - `201 Created` on success:  
+      ```json
+      { "message": "user registered" }
+      ```
+    - `409 Conflict` if user exists:  
+      ```json
+      { "error": "username already exists" }
+      ```
+
+#### Login
+
+- **Endpoint:** `POST /login`
+- **Request Body:**
     ```json
     {
       "username": "your_username",
       "password": "your_password"
     }
     ```
-  - Response:
-    ```json
-    {
-      "token": "<JWT_TOKEN>"
-    }
-    ```
+- **Response:**
+    - `200 OK` on success:  
+      ```json
+      { "token": "<JWT_TOKEN>" }
+      ```
+    - `401 Unauthorized` on failure:  
+      ```json
+      { "error": "invalid credentials" }
+      ```
 
-### Direct Messages
+---
 
-- **Send a direct message**
-  - `POST /dm/send`
-  - Header: `Authorization: Bearer <token>`
-  - Body:
+### 💬 Direct Messages
+
+#### Send a Direct Message
+
+- **Endpoint:** `POST /dm/send`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Request Body:**
     ```json
     {
       "to": "recipient_username",
       "content": "Hello!"
     }
     ```
-- **Fetch direct message history**
-  - `GET /dm/history?user=recipient_username`
-  - Header: `Authorization: Bearer <token>`
+- **Response:**
+    - `200 OK`  
+      ```json
+      { "message": "sent" }
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
 
-### Group Chat
+#### Fetch Direct Message History
 
-- **Create a group**
-  - `POST /group/create`
-  - Header: `Authorization: Bearer <token>`
-  - Body:
+- **Endpoint:** `GET /dm/history?user=recipient_username`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Response:**
+    - `200 OK`  
+      ```json
+      [
+        {
+          "id": "b7c9...",
+          "from": "alice",
+          "to": "bob",
+          "content": "Hello Bob!",
+          "type": "direct",
+          "timestamp": "2025-07-06T05:00:00Z"
+        },
+        ...
+      ]
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
+
+---
+
+### 👥 Group Chat
+
+#### Create a Group
+
+- **Endpoint:** `POST /group/create`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Request Body:**
     ```json
     {
       "group": "group_name"
     }
     ```
+- **Response:**
+    - `201 Created`  
+      ```json
+      { "message": "group created" }
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
 
-- **Send a group message**
-  - `POST /group/send`
-  - Header: `Authorization: Bearer <token>`
-  - Body:
+#### Send a Group Message
+
+- **Endpoint:** `POST /group/send`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Request Body:**
     ```json
     {
       "group": "group_name",
       "content": "Group message!"
     }
     ```
+- **Response:**
+    - `200 OK`  
+      ```json
+      { "message": "sent" }
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
 
-- **Fetch group chat history**
-  - `GET /group/history?group=group_name`
-  - Header: `Authorization: Bearer <token>`
+#### Fetch Group Chat History
 
-### Broadcast
+- **Endpoint:** `GET /group/history?group=group_name`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Response:**
+    - `200 OK`  
+      ```json
+      [
+        {
+          "id": "a1b2...",
+          "from": "alice",
+          "group": "mygroup",
+          "content": "Hi everyone",
+          "type": "group",
+          "timestamp": "2025-07-06T05:00:00Z"
+        },
+        ...
+      ]
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
 
-- **Send a broadcast message**
-  - `POST /broadcast/send`
-  - Header: `Authorization: Bearer <token>`
-  - Body:
+---
+
+### 📢 Broadcast
+
+#### Send a Broadcast Message
+
+- **Endpoint:** `POST /broadcast/send`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Request Body:**
     ```json
     {
       "content": "Message to everyone!"
     }
     ```
-- **Fetch broadcast messages**
-  - `GET /broadcast/history`
-  - Header: `Authorization: Bearer <token>`
+- **Response:**
+    - `200 OK`  
+      ```json
+      { "message": "broadcasted" }
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
+
+#### Fetch Broadcast Messages
+
+- **Endpoint:** `GET /broadcast/history`
+- **Headers:**  
+  `Authorization: Bearer <token>`
+- **Response:**
+    - `200 OK`  
+      ```json
+      [
+        {
+          "id": "xxxx",
+          "from": "alice",
+          "content": "Hello all!",
+          "type": "broadcast",
+          "timestamp": "2025-07-06T05:00:00Z"
+        },
+        ...
+      ]
+      ```
+    - `500 Internal Server Error`  
+      ```json
+      { "error": "..." }
+      ```
 
 ---
 

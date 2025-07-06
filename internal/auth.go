@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-// AuthMiddleware: extract username from JWT, put in context
+// authmiddleware: extract username from JWT, put in context
 func AuthMiddleware(userSvc *UserService, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		auth := r.Header.Get("Authorization")
@@ -25,7 +25,7 @@ func AuthMiddleware(userSvc *UserService, next http.HandlerFunc) http.HandlerFun
 	}
 }
 
-// UsernameFromCtx extracts username from context
+// extracts username from context
 func UsernameFromCtx(ctx context.Context) string {
 	v := ctx.Value("username")
 	if v == nil {

@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-// Handler struct wires everything
 type Handler struct {
 	User *UserService
 	Chat *ChatService

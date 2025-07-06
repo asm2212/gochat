@@ -112,7 +112,6 @@ func (s *ChatService) GetBroadcasts(ctx context.Context) ([]Message, error) {
 // --- Serialization helpers ---
 
 func serializeMsg(msg Message) string {
-	// Simple serialization for demo (use JSON in prod)
 	return fmt.Sprintf("%s|%s|%s|%s|%s|%s|%d", msg.ID, msg.From, msg.To, msg.Group, msg.Content, msg.Type, msg.Timestamp.Unix())
 }
 
